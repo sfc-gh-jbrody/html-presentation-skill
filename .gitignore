@@ -11,3 +11,9 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# Local slide scratch files (not part of the skill)
+/html-presentation/s4
+/html-presentation/s5
+/html-presentation/s9
+/html-presentation/s10

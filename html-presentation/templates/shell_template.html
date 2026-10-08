@@ -18,6 +18,7 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{TITLE}}</title>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --accent: {{ACCENT}};
@@ -26,6 +27,44 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
       --secondary: #a0a0a0;
       --card: #1a1a1a;
       --border: #2a2a2a;
+      --code-bg: #111111;
+      --code-text: #e0e0e0;
+      --nav-bg: rgba(26, 26, 26, 0.9);
+      --panel-bg: #111111;
+      --muted: #555555;
+      --notes-text: #d0d0d0;
+      --shimmer-hi: rgba(255, 255, 255, 0.07);
+    }
+    /* Light theme (DEFAULT) — signature white look: Inter, accent top band, soft cards. */
+    body.theme-light {
+      --bg: #FFFFFF;
+      --text: #1A2331;
+      --secondary: #5B6776;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --code-bg: #F1F5F9;
+      --code-text: #1A2331;
+      --nav-bg: rgba(255, 255, 255, 0.92);
+      --panel-bg: #F8FAFC;
+      --muted: #94A3B8;
+      --notes-text: #334155;
+      --shimmer-hi: rgba(0, 0, 0, 0.05);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
+    body.theme-light::before {
+      content: ""; position: fixed; top: 0; left: 0; right: 0; height: 8px; z-index: 200;
+      background: linear-gradient(90deg,
+        color-mix(in srgb, var(--accent) 55%, #000) 0%,
+        var(--accent) 60%,
+        color-mix(in srgb, var(--accent) 45%, #fff) 100%);
+    }
+    body.theme-light .card,
+    body.theme-light .code-block { box-shadow: 0 10px 30px rgba(26, 35, 49, 0.06); }
+    body.theme-light #nav { box-shadow: 0 6px 18px rgba(26, 35, 49, 0.08); }
+    body.theme-light .gradient-bg {
+      background: linear-gradient(135deg, #ffffff, #f4fbfe, #ffffff, #eef6fb);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -54,6 +93,8 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
     .slide-inner p, .slide-inner li {
       font-size: clamp(1.2rem, 1.9vw, 2rem); line-height: 1.6; color: var(--secondary);
     }
+    /* Title emphasis: wrap the payoff phrase of a heading in <span class="accent"> */
+    .slide-inner h1 .accent, .slide-inner h2 .accent { color: var(--accent); }
     .slide-inner ul, .slide-inner ol { list-style: none; padding: 0; }
     .speaker-notes { display: none; }
     a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--accent); transition: color 0.2s; }
@@ -65,7 +106,7 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
     #nav {
       position: fixed; bottom: clamp(12px, 2vh, 24px); right: clamp(16px, 2vw, 28px);
       display: flex; align-items: center; gap: 12px;
-      background: rgba(26, 26, 26, 0.9); border: 1px solid var(--border);
+      background: var(--nav-bg); border: 1px solid var(--border);
       border-radius: 999px; padding: 8px 18px;
       font-size: 0.85rem; color: var(--secondary);
       backdrop-filter: blur(8px); z-index: 100;
@@ -78,7 +119,7 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
       line-height: 1;
       vertical-align: middle;
     }
-    #notes-hint { font-size: 0.72rem; color: #555; margin-left: 4px; }
+    #notes-hint { font-size: 0.72rem; color: var(--muted); margin-left: 4px; }
     /* BEGIN_COMPONENT_CSS */
     .anim { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .slide.active .anim { opacity: 1; transform: translateY(0); }
@@ -109,11 +150,11 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; text-align: center; }
     .icon-list { list-style: none; padding: 0; text-align: left; }
     .icon-list li { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .code-block { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; text-align: left; font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: 1rem; line-height: 1.7; color: #e0e0e0; overflow-x: auto; width: 100%; white-space: pre-wrap; }
+    .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; text-align: left; font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: 1rem; line-height: 1.7; color: var(--code-text); overflow-x: auto; width: 100%; white-space: pre-wrap; }
     .code-block .kw  { color: var(--accent); font-weight: 600; }
     .code-block .str { color: #10B981; }
     .code-block .var { color: #F59E0B; }
-    .code-block .cm  { color: #555; font-style: italic; }
+    .code-block .cm  { color: var(--muted); font-style: italic; }
     .step-flow { display: flex; align-items: center; gap: 16px; width: 100%; }
     .step-flow .card { flex: 1; text-align: center; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; width: 100%; }
@@ -141,7 +182,7 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
     .scale-pop { opacity: 0; }
     .scale-pop.visible { animation: scalePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     @keyframes shimmer { to { background-position: 200% center; } }
-    .shimmer { background: linear-gradient(90deg, var(--card) 25%, rgba(255,255,255,0.07) 50%, var(--card) 75%); background-size: 200% auto; animation: shimmer 1.8s linear infinite; border-radius: 12px; }
+    .shimmer { background: linear-gradient(90deg, var(--card) 25%, var(--shimmer-hi) 50%, var(--card) 75%); background-size: 200% auto; animation: shimmer 1.8s linear infinite; border-radius: 12px; }
     @keyframes borderGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(41,181,232,0); border-color: var(--border); } 50% { box-shadow: 0 0 0 6px rgba(41,181,232,0.25); border-color: var(--accent); } }
     .glow-pulse { border: 1px solid var(--border); border-radius: 16px; animation: borderGlow 2s ease-in-out infinite; }
     @keyframes blinkCaret { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
@@ -152,7 +193,7 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
     #deck.panel-open { height: calc(100vh - 180px); }
     #notes-panel {
       position: fixed; bottom: 0; left: 0; width: 100%; height: 180px;
-      background: #111; border-top: 2px solid var(--accent);
+      background: var(--panel-bg); border-top: 2px solid var(--accent);
       display: none; flex-direction: column; z-index: 99;
     }
     #notes-panel.open { display: flex; }
@@ -161,16 +202,16 @@ https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code-cli
       padding: 8px 20px 6px; border-bottom: 1px solid var(--border); flex-shrink: 0;
     }
     #notes-panel-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.8px; color: var(--accent); font-weight: 600; }
-    #notes-panel-slide { font-size: 0.7rem; color: #555; letter-spacing: 1px; }
-    #notes-panel-close { font-size: 0.7rem; color: #555; cursor: pointer; letter-spacing: 1px; transition: color 0.2s; }
+    #notes-panel-slide { font-size: 0.7rem; color: var(--muted); letter-spacing: 1px; }
+    #notes-panel-close { font-size: 0.7rem; color: var(--muted); cursor: pointer; letter-spacing: 1px; transition: color 0.2s; }
     #notes-panel-close:hover { color: #aaa; }
     #notes-panel-body { flex: 1; overflow-y: auto; padding: 12px 20px; }
-    #notes-panel-text { font-size: 1rem; line-height: 1.65; color: #d0d0d0; }
+    #notes-panel-text { font-size: 1rem; line-height: 1.65; color: var(--notes-text); }
     body.panel-open #nav { bottom: calc(180px + clamp(12px, 2vh, 24px)); }
     /* END_NOTES_CSS */
   </style>
 </head>
-<body>
+<body class="{{THEME_CLASS}}">
   <div id="deck">
   <!-- INSERT_SLIDE_1 -->
   </div><!-- end #deck -->

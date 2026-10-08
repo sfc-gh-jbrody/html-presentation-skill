@@ -87,10 +87,11 @@ Checks performed:
 33. **Missing slide-inner wrapper** — warns when a slide's first child div
    is not ``class="slide-inner"`` (and is not ``gradient-bg``); content may
    misalign without the standardized padding and max-width
-34. **Light-theme color override** — warns when slide content contains
-   hardcoded light background colors (``#fff``, ``white``, ``#f8fafc``, etc.)
-   or dark text colors (``#1e293b``, ``#0f172a``, ``#374151``, etc.) that
-   override the dark theme
+34. **Light-theme color override** — for DARK decks only, warns when slide content
+   contains hardcoded light background colors (``#fff``, ``white``, ``#f8fafc``, etc.)
+   or dark text colors (``#1e293b``, ``#0f172a``, ``#374151``, etc.) that override the
+   dark theme. Skipped automatically when the deck is light-themed (``body`` has class
+   ``theme-light``), since light backgrounds and dark text are expected there.
 35. **scale-pop underuse** — warns when a large number element (font-size >= 4rem) uses
    ``.anim`` but not ``.scale-pop``; the spring entrance animation is more impactful for
    hero numbers and is pre-loaded in the shell (Pattern 9 in css-animations.md)
@@ -1388,31 +1389,39 @@ def validate(html_path: Path) -> tuple[list[str], list[str], list[str]]:
     else:
         passes.append("All slides use .slide-inner wrapper (or gradient-bg or orb wrapper pattern)")
 
-    # 34. Light-theme color override — hardcoded light backgrounds / dark text inside slides
-    light_theme_hits: list[str] = []
-    for sb in slide_blocks:
-        sid = sb.group(2)
-        slide_body = sb.group(3)
-        for m in LIGHT_BG_RE.finditer(slide_body):
-            pos = sb.start() + len(sb.group(1)) + m.start()
-            ln = line_no(html, pos)
-            light_theme_hits.append(
-                f"{sid} line {ln}: '{m.group(0)}' — light background overrides dark theme"
-            )
-        for m in DARK_TEXT_RE.finditer(slide_body):
-            pos = sb.start() + len(sb.group(1)) + m.start()
-            ln = line_no(html, pos)
-            light_theme_hits.append(
-                f"{sid} line {ln}: '{m.group(0)}' — dark text color overrides dark theme"
-            )
-    if light_theme_hits:
-        warns.append(
-            f"{len(light_theme_hits)} light-theme color override(s) found: "
-            f"{light_theme_hits[0]}"
-            + (f"  (+{len(light_theme_hits) - 1} more)" if len(light_theme_hits) > 1 else "")
-        )
+    # 34. Light-theme color override — hardcoded light backgrounds / dark text inside slides.
+    # Only meaningful for DARK decks. Light is the default theme, so a light-themed deck
+    # (body class "theme-light") is EXPECTED to use light backgrounds and dark text — skip.
+    is_light_theme = bool(
+        re.search(r'<body[^>]*class=["\'][^"\']*theme-light', html, re.IGNORECASE)
+    )
+    if is_light_theme:
+        passes.append("Light theme detected — skipping dark-theme color-override check (#34)")
     else:
-        passes.append("No light-theme color overrides detected in slides")
+        light_theme_hits: list[str] = []
+        for sb in slide_blocks:
+            sid = sb.group(2)
+            slide_body = sb.group(3)
+            for m in LIGHT_BG_RE.finditer(slide_body):
+                pos = sb.start() + len(sb.group(1)) + m.start()
+                ln = line_no(html, pos)
+                light_theme_hits.append(
+                    f"{sid} line {ln}: '{m.group(0)}' — light background overrides dark theme"
+                )
+            for m in DARK_TEXT_RE.finditer(slide_body):
+                pos = sb.start() + len(sb.group(1)) + m.start()
+                ln = line_no(html, pos)
+                light_theme_hits.append(
+                    f"{sid} line {ln}: '{m.group(0)}' — dark text color overrides dark theme"
+                )
+        if light_theme_hits:
+            warns.append(
+                f"{len(light_theme_hits)} light-theme color override(s) found: "
+                f"{light_theme_hits[0]}"
+                + (f"  (+{len(light_theme_hits) - 1} more)" if len(light_theme_hits) > 1 else "")
+            )
+        else:
+            passes.append("No light-theme color overrides detected in slides")
 
     # 35. scale-pop underuse — large stat numbers using .anim but not .scale-pop
     LARGE_FONT_ANIM_RE = re.compile(

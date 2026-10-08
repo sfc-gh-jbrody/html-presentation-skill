@@ -20,7 +20,10 @@ Usage (via run_script.py from html-presentation/):
       --accent "#29B5E8" \\
       --slides 18 \\
       --output my-deck/my-deck-all-technical-slides.html \\
-      [--no-notes] [--no-all-markers]
+      [--theme dark] [--no-notes] [--no-all-markers]
+
+Theme defaults to 'light' (signature white look). Pass --theme dark for the
+original dark deck.
 
 Exit codes:
   0  success — file written and all 4 shell checks passed
@@ -196,6 +199,10 @@ def main() -> int:
     parser.add_argument("--no-all-markers", dest="all_markers", action="store_false",
                         help="Emit only INSERT_SLIDE_1 (legacy sequential mode). "
                              "Default is to emit all N markers for parallel batch builds.")
+    parser.add_argument("--theme", choices=["light", "dark"], default="light",
+                        help="Color theme. 'light' (DEFAULT) = signature white look "
+                             "(Inter font, accent top band, soft cards). 'dark' = original "
+                             "dark deck. Sets the <body> theme class.")
     parser.set_defaults(notes=True, all_markers=True)
     args = parser.parse_args()
 
@@ -256,7 +263,8 @@ def main() -> int:
     html = (html
         .replace("{{TITLE}}", args.title)
         .replace("{{ACCENT}}", args.accent)
-        .replace("{{SLIDE_COUNT}}", str(args.slides)))
+        .replace("{{SLIDE_COUNT}}", str(args.slides))
+        .replace("{{THEME_CLASS}}", f"theme-{args.theme}"))
     # Re-check after substitution.
     still_unreplaced = re.findall(r"\{\{[A-Z_]+\}\}", html)
     if still_unreplaced:
@@ -264,7 +272,7 @@ def main() -> int:
             f"Template contains unresolved placeholders after substitution: "
             f"{', '.join(still_unreplaced)}",
             "Update templates/shell_template.html to use only the supported "
-            "placeholders: {{TITLE}}, {{ACCENT}}, {{SLIDE_COUNT}}.",
+            "placeholders: {{TITLE}}, {{ACCENT}}, {{SLIDE_COUNT}}, {{THEME_CLASS}}.",
         )
 
     # --- All-markers expansion ----------------------------------------------
@@ -316,7 +324,7 @@ def main() -> int:
     markers_status = "all-markers (parallel build)" if args.all_markers else "single-marker (sequential build)"
     print(
         f"SUCCESS: Shell written to {output} | "
-        f"slides={args.slides} | accent={args.accent} | {notes_status} | {markers_status}"
+        f"slides={args.slides} | accent={args.accent} | theme={args.theme} | {notes_status} | {markers_status}"
     )
     if args.all_markers:
         print(

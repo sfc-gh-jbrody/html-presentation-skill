@@ -1,6 +1,8 @@
-# HTML Output Spec
+# Legacy shell output spec
 
-Generate single self-contained HTML file. No external images or base64 inline. One external CDN permitted: Material Symbols Rounded (`fonts.googleapis.com/css2?family=Material+Symbols+Rounded&display=block`). All other assets self-contained.
+This reference describes the legacy shell helpers, not the default design workflow. `design-quality-standard.md` and the installed `html-authoring` safety rules take precedence. The structural conventions below apply when using that shell; direct-authored slides follow `SKILL.md` instead.
+
+Final output must be a self-contained HTML file with embedded approved fonts and images, or system fonts and inline SVG. The legacy shell still contains remote font links: remove or embed them before delivery. No runtime CDN requests are permitted.
 
 **Slide Structure:** Each slide MUST follow this exact structure:
 ```html
@@ -15,7 +17,10 @@ The `.slide-inner` wrapper is mandatory — it applies the standardized padding 
 
 **Layout:** Fullscreen slides (100vw × 100vh), content centered, max-width `min(1600px, 96vw)`, padding `clamp(1rem, 3.5vh, 2.75rem) clamp(1rem, 3.5vw, 3rem)`. Fill viewport — don't waste space with large side margins.
 
-**Colors:** Background `#0a0a0a`, text `#ffffff`, secondary `#a0a0a0`, cards `#1a1a1a`, borders `#2a2a2a`, plus one accent per deck (see `references/accent-colors.md`).
+**Colors (theme-aware — reference the CSS vars, never hardcode):** The shell sets these per theme via the `<body>` theme class.
+- **Light theme (DEFAULT):** background `#FFFFFF`, text `#1A2331`, secondary `#5B6776`, cards `#FFFFFF` (soft shadow), borders `#E2E8F0`, plus a thin accent gradient band across the top of every slide. Snowflake blue `#29B5E8` is the default accent.
+- **Dark theme (`--theme dark`):** background `#0a0a0a`, text `#ffffff`, secondary `#a0a0a0`, cards `#1a1a1a`, borders `#2a2a2a`.
+- One accent per deck (see `references/accent-colors.md`). Use `var(--bg)`, `var(--text)`, `var(--secondary)`, `var(--card)`, `var(--border)`, `var(--accent)` so slides adapt to either theme — do not hardcode background/text hex values.
 
 **Typography:** Use relative units — no hardcoded `px` for font sizes or spacing. Reference values:
 - H2 slide titles: `clamp(2.75rem, 4.4vw, 5rem)`

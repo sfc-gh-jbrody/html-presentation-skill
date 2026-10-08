@@ -1,4 +1,24 @@
-# Cortex Code CLI HTML Presentation Skill
+# HTML Presentation Skill
+
+An independently maintained fork of [sfc-gh-tmeacham/html-presentation-skill](https://github.com/sfc-gh-tmeacham/html-presentation-skill). The original implementation and helper scripts remain attributed to the upstream repository.
+
+## This fork's defaults
+
+- Content-led layouts for full decks, detailed briefings, and standalone slides.
+- Light Snowflake-blue styling with selective deep-blue focal surfaces.
+- Neutral, source-grounded writing without automatic agendas, calls to action, or arbitrary slide/word caps.
+- Self-contained output with embedded assets; no runtime font or icon CDN dependencies.
+- All-slide rendering, contact sheets, and separate structural, visual, editorial, and user-acceptance checks.
+
+The authoritative workflow is `html-presentation/SKILL.md`, supported by `references/design-quality-standard.md`, `templates/briefing-design.css`, and `scripts/render_review.py` inside that directory. Rendering requires Playwright, Pillow, and installed Google Chrome or Playwright Chromium:
+
+```bash
+uv run --with playwright --with Pillow python /absolute/skill/scripts/render_review.py /absolute/deck.html --output /absolute/fresh-review-directory
+```
+
+The renderer currently requires a `#jump` select with zero-based values for multi-slide decks; legacy shells need adaptation or equivalent browser-based review. It is a local review helper for trusted HTML, not a sandbox for untrusted documents. Visual and factual approval still require review.
+
+The older shell generator and linter are retained for compatibility. They contain legacy conventions, including remote-font links and marketing-oriented checks, and are not the release authority for this fork. Adapt their output to the current safety and design standard before delivery.
 
 [![Built with Cortex Code](https://img.shields.io/badge/Built%20with-Cortex%20Code-29B5E8?style=flat&logo=snowflake&logoColor=white)](https://docs.snowflake.com/en/user-guide/cortex-code/cortex-code)
 [![Snowflake](https://img.shields.io/badge/Snowflake-29B5E8?style=flat&logo=snowflake&logoColor=white)](https://www.snowflake.com)
@@ -12,7 +32,7 @@ A skill for [Cortex Code CLI](https://docs.snowflake.com/en/user-guide/cortex-co
 Just paste this into a Cortex Code CLI chat:
 
 ```
-I want to import this as a remote skill from github https://github.com/sfc-gh-tmeacham/html-presentation-skill.git
+I want to import this as a remote skill from github https://github.com/sfc-gh-jbrody/html-presentation-skill.git
 ```
 
 Cortex Code will handle the rest automatically.
@@ -22,7 +42,7 @@ Cortex Code will handle the rest automatically.
 Inside a Cortex Code CLI or SnowWork session, run:
 
 ```
-/skill add https://github.com/sfc-gh-tmeacham/html-presentation-skill.git
+/skill add https://github.com/sfc-gh-jbrody/html-presentation-skill.git
 ```
 
 That's it. Cortex Code clones the repo and makes the skill available immediately. To verify it loaded:
@@ -46,7 +66,11 @@ To update the skill to the latest version:
 
 > For full documentation on Cortex Code skills see [Cortex Code CLI extensibility](https://docs.snowflake.com/en/user-guide/cortex-code/extensibility#label-extensibility-skills).
 
-## Why HTML?
+## Legacy upstream workflow reference
+
+The sections below document the original helper workflow, not this fork's defaults. In particular, CDN dependencies, automatic agenda/QR slides, and dark styling are legacy behaviors. Browser/device compatibility must be tested rather than assumed.
+
+### Why HTML?
 
 - **Minimal dependencies** — every deck is a single `.html` file with one external dependency: Google Material Symbols (loaded from `fonts.googleapis.com`). An internet connection is required to display icons when presenting.
 - **Pixel-perfect on any device** — open it in any browser, on any OS, and it looks exactly the same.

@@ -1,5 +1,5 @@
 # Subagent Reference Bundle
-Condensed reference for slide-building subagents. Mandatory rules in prompt block take precedence.
+Legacy implementation examples for slide-building subagents. FIRST read `design-quality-standard.md` and the current `SKILL.md`; those override conflicting examples below. No automatic agenda/BLUF/CTA, word cap, seven-slide cap, remote fonts, or forced dark theme. Inline SVG icons are allowed. Use the approved storyboard and shared design CSS; review every slide and the full contact sheet. Do not treat an old example as a requirement.
 
 ---
 
@@ -89,7 +89,10 @@ Slide structure:
 ```
 `.slide-inner` = padding `clamp(1rem,3.5vh,2.75rem) clamp(1rem,3.5vw,3rem)`, `max-width:min(1600px,96vw)`. Exception: ANY slide may place ambient glow orb divs as direct children BEFORE `.slide-inner` (add `overflow:hidden` to the `.slide` div, use percentage-based coords, set `z-index:0` on orbs and `z-index:1` on `.slide-inner`). NEVER place orbs inside `.slide-inner`.
 
-CSS vars: `--bg:#0a0a0a`, `--text:#fff`, `--secondary:#a0a0a0`, `--card:#1a1a1a`, `--border:#2a2a2a`, `--accent` per deck.
+Theme-aware CSS vars (ALWAYS reference the var, NEVER hardcode hex — the shell themes them): `--bg`, `--text`, `--secondary`, `--card`, `--border`, `--code-bg`, `--code-text`, `--muted`, `--accent` per deck.
+- **Light theme (DEFAULT)**: `--bg:#FFFFFF`, `--text:#1A2331`, `--secondary:#5B6776`, `--card:#FFFFFF`, `--border:#E2E8F0`. White cards get a soft shadow and a thin accent gradient band sits at the top of every slide (shell-provided). Snowflake blue `#29B5E8` is the default accent.
+- **Dark theme** (`--theme dark`): `--bg:#0a0a0a`, `--text:#fff`, `--secondary:#a0a0a0`, `--card:#1a1a1a`, `--border:#2a2a2a`.
+- Because components use these vars, they adapt to either theme automatically. Do NOT hardcode `#fff`/`#111`/`rgba(255,255,255,...)` backgrounds, text, or row stripes — use the vars (for a subtle table row stripe use `rgba(128,128,128,0.08)`, which reads on both themes).
 
 Typography (relative units only, no px for font-size):
 - H2: `clamp(2.75rem,4.4vw,5rem)`
@@ -277,7 +280,7 @@ Swap icon/color: info=accent, warning=`#F59E0B`, error=`#EF4444`, success=`#10B9
     </thead>
     <tbody>
       <tr style="border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">Value</td></tr>
-      <tr style="background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">Value</td></tr>
+      <tr style="background:rgba(128,128,128,0.08);border-bottom:1px solid var(--border);"><td style="padding:12px 16px;">Value</td></tr>
     </tbody>
   </table>
 </div>
